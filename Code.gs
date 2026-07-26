@@ -30,11 +30,11 @@
  * ==============================================================
  */
 
-const SHEET_ID = 'DÁN_ID_GOOGLE_SHEET_VÀO_ĐÂY';
+const SHEET_ID = '1oZwEdTrl_NDaeH5vbrAhRop13_coZyNKbLhjXL9n0u4';
 const SHEET_NAME = 'Sheet1';       // tab chứa danh sách bài nộp
 const SETTINGS_SHEET_NAME = 'CaiDat'; // tab chứa cấu hình cuộc thi (tự tạo)
-const FOLDER_ID = 'DÁN_ID_THU_MUC_GOOGLE_DRIVE_VÀO_ĐÂY';
-const ADMIN_PASSWORD = 'DOI_MAT_KHAU_NAY';
+const FOLDER_ID = '1w4QAeUANi9_M0e8kjGbAjgSmYwPaOPNU';
+const ADMIN_PASSWORD = '123456';
 
 // ============================== doGet ==============================
 // Dùng để lấy cấu hình cuộc thi (tên, ngày mở, ngày kết thúc) — công khai,
