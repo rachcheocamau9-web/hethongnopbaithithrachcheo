@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản trị cuộc thi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,600;0,700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F6F1E4;
+    --ink: #232323;
+    --ink-soft: #5b5346;
+    --seal: #A9342A;
+    --seal-dark: #7d2620;
+    --gold: #B8892B;
+    --line: #d9cfb4;
+  }
+  *{ box-sizing:border-box; }
+  html, body{
+    margin:0; min-height:100vh;
+    background:
+      radial-gradient(1200px 800px at 15% -10%, #fffdf7 0%, transparent 55%),
+      radial-gradient(1000px 700px at 110% 110%, #efe5c8 0%, transparent 60%),
+      var(--paper);
+    font-family:'Be Vietnam Pro', sans-serif;
+    color: var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    padding: 32px 16px;
+  }
+  .card{
+    width:100%; max-width: 460px;
+    background: #FFFDF8;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(35,30,20,0.04), 0 20px 50px -20px rgba(35,30,20,0.35);
+    padding: 34px 34px 30px;
+  }
+  .eyebrow{
+    text-align:center; font-size: 11px; letter-spacing: 0.22em;
+    color: var(--gold); font-weight: 700; text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+  h1{
+    font-family:'Noto Serif', serif; font-weight:700; text-align:center;
+    font-size: 22px; margin: 0 0 6px;
+  }
+  .rule{ width:56px; height:3px; background:var(--seal); margin:0 auto 24px; border-radius:2px; }
+  label{ display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:7px; }
+  .field{ margin-bottom:18px; }
+  input[type="text"], input[type="password"], input[type="datetime-local"]{
+    width:100%; font-family:inherit; font-size:14.5px; padding:11px 13px;
+    border:1.5px solid var(--line); border-radius:8px; background:#FFFEFB;
+    color:var(--ink); outline:none; transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus{ border-color: var(--seal); box-shadow:0 0 0 3px rgba(169,52,42,0.12); }
+  .btn{
+    width:100%; border:none; border-radius:9px; padding:13px 18px;
+    font-family:inherit; font-size:14.5px; font-weight:700; letter-spacing:0.02em;
+    color:#fff; background:linear-gradient(180deg, var(--seal) 0%, var(--seal-dark) 100%);
+    cursor:pointer; margin-top:6px; box-shadow:0 8px 18px -8px rgba(169,52,42,0.55);
+    transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn:hover:not(:disabled){ transform:translateY(-1px); }
+  .btn:disabled{ opacity:0.65; cursor:not-allowed; }
+  .spinner{
+    width:14px; height:14px; border:2.5px solid rgba(255,255,255,0.4);
+    border-top-color:#fff; border-radius:50%; animation: spin .7s linear infinite; display:none;
+  }
+  .btn.loading .spinner{ display:inline-block; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .msg{ font-size:12.5px; text-align:center; margin-top:12px; display:none; }
+  .msg.error{ color: var(--seal); }
+  .msg.success{ color:#4c6b4f; }
+  hr.divider{ border:none; border-top:1px dashed var(--line); margin:22px 0; }
+  .hint{ font-size:11.5px; color:var(--ink-soft); opacity:0.8; margin-top:-10px; margin-bottom:18px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="eyebrow">Quản trị</div>
+  <h1>THIẾT LẬP CUỘC THI</h1>
+  <div class="rule"></div>
+
+  <div class="field">
+    <label for="contestName">Tên cuộc thi</label>
+    <input type="text" id="contestName" placeholder="VD: Cuộc thi ảnh nghệ thuật 2026">
+  </div>
+
+  <div class="field">
+    <label for="openDate">Ngày mở nhận bài</label>
+    <input type="datetime-local" id="openDate">
+  </div>
+
+  <div class="field">
+    <label for="endDate">Ngày kết thúc nhận bài</label>
+    <input type="datetime-local" id="endDate">
+  </div>
+
+  <hr class="divider">
+
+  <div class="field">
+    <label for="password">Mật khẩu quản trị</label>
+    <input type="password" id="password" placeholder="Nhập mật khẩu để lưu thay đổi">
+  </div>
+  <div class="hint">Cần nhập mật khẩu mỗi lần lưu để xác thực quyền admin.</div>
+
+  <button class="btn" id="saveBtn">
+    <span class="spinner"></span>
+    <span id="saveLabel">LƯU THIẾT LẬP</span>
+  </button>
+
+  <div class="msg" id="msgBox"></div>
+</div>
+
+<script>
+  // Dán URL Web App (Google Apps Script) — giống hệt URL dùng trong index.html
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjBo6nvQ9HZ0-aboX-FME1scjHF6JdKbcscmlQX3yg7OSLWfNpLtlU6LZihgV2fchsOg/exec";
+
+  const contestName = document.getElementById('contestName');
+  const openDate = document.getElementById('openDate');
+  const endDate = document.getElementById('endDate');
+  const password = document.getElementById('password');
+  const saveBtn = document.getElementById('saveBtn');
+  const saveLabel = document.getElementById('saveLabel');
+  const msgBox = document.getElementById('msgBox');
+
+  function toLocalInputValue(isoStr){
+    if(!isoStr) return '';
+    const d = new Date(isoStr);
+    const pad = n => n.toString().padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function showMsg(text, type){
+    msgBox.textContent = text;
+    msgBox.className = `msg ${type}`;
+    msgBox.style.display = 'block';
+  }
+
+  async function loadCurrentSettings(){
+    if(SCRIPT_URL.includes('PASTE_YOUR')){
+      showMsg('Chưa cấu hình SCRIPT_URL trong file admin.html.', 'error');
+      return;
+    }
+    try{
+      const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
+      const data = await res.json();
+      if(data.status === 'success'){
+        contestName.value = data.contestName || '';
+        openDate.value = toLocalInputValue(data.openDate);
+        endDate.value = toLocalInputValue(data.endDate);
+      }
+    }catch(err){
+      console.error(err);
+      showMsg('Không tải được thiết lập hiện tại.', 'error');
+    }
+  }
+
+  loadCurrentSettings();
+
+  saveBtn.addEventListener('click', async () => {
+    msgBox.style.display = 'none';
+
+    if(!password.value){
+      showMsg('Vui lòng nhập mật khẩu quản trị.', 'error');
+      return;
+    }
+    if(!contestName.value.trim()){
+      showMsg('Vui lòng nhập tên cuộc thi.', 'error');
+      return;
+    }
+    if(openDate.value && endDate.value && new Date(openDate.value) >= new Date(endDate.value)){
+      showMsg('Ngày kết thúc phải sau ngày mở.', 'error');
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.classList.add('loading');
+    saveLabel.textContent = 'ĐANG LƯU...';
+
+    try{
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'updateSettings',
+          password: password.value,
+          contestName: contestName.value.trim(),
+          openDate: openDate.value ? new Date(openDate.value).toISOString() : '',
+          endDate: endDate.value ? new Date(endDate.value).toISOString() : ''
+        })
+      });
+      const data = await res.json();
+      if(data.status === 'success'){
+        showMsg('Đã lưu thiết lập cuộc thi thành công.', 'success');
+        password.value = '';
+      } else {
+        showMsg(data.message || 'Không thể lưu thiết lập.', 'error');
+      }
+    }catch(err){
+      console.error(err);
+      showMsg('Có lỗi khi lưu. Vui lòng thử lại.', 'error');
+    }finally{
+      saveBtn.disabled = false;
+      saveBtn.classList.remove('loading');
+      saveLabel.textContent = 'LƯU THIẾT LẬP';
+    }
+  });
+</script>
+</body>
+</html>

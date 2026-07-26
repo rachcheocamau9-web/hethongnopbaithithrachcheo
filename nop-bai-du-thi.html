@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nộp bài dự thi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,500;0,600;0,700;1,600&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F6F1E4;
+    --paper-edge: #ECE3CC;
+    --ink: #232323ff;
+    --ink-soft: #5b5346;
+    --seal: #A9342A;
+    --seal-dark: #7d2620;
+    --gold: #B8892B;
+    --line: #d9cfb4;
+    --success-bg: #F6F1E4;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    min-height:100vh;
+    background:
+      radial-gradient(1200px 800px at 15% -10%, #fffdf7 0%, transparent 55%),
+      radial-gradient(1000px 700px at 110% 110%, #efe5c8 0%, transparent 60%),
+      var(--paper);
+    font-family:'Be Vietnam Pro', sans-serif;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px;
+  }
+
+  /* subtle paper fiber texture */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:0.5;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.012) 0px, rgba(0,0,0,0.012) 1px, transparent 1px, transparent 3px);
+  }
+
+  .card{
+    position:relative;
+    width:100%;
+    max-width: 460px;
+    background: #FFFDF8;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(35,30,20,0.04), 0 20px 50px -20px rgba(35,30,20,0.35);
+    padding: 40px 34px 34px;
+    overflow: hidden;
+  }
+
+  .perforation{
+    position:absolute;
+    top:0; left:0; right:0;
+    height: 10px;
+    background-image: radial-gradient(circle, var(--paper) 3.5px, transparent 3.6px);
+    background-size: 18px 18px;
+    background-position: 9px -5px;
+  }
+
+  .eyebrow{
+    text-align:center;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 6px 0 10px;
+  }
+
+  h1{
+    font-family: 'Noto Serif', serif;
+    font-weight: 700;
+    text-align:center;
+    font-size: 26px;
+    letter-spacing: 0.02em;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+
+  .rule{
+    width: 56px;
+    height: 3px;
+    background: var(--seal);
+    margin: 0 auto 26px;
+    border-radius: 2px;
+  }
+
+  label{
+    display:block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 7px;
+  }
+
+  .field{ margin-bottom: 20px; }
+
+  input[type="text"]{
+    width:100%;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: #FFFEFB;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input[type="text"]:focus{
+    border-color: var(--seal);
+    box-shadow: 0 0 0 3px rgba(169,52,42,0.12);
+  }
+  input[type="text"]::placeholder{ color: #b8ae98; }
+
+  .dropzone{
+    border: 1.5px dashed var(--line);
+    border-radius: 10px;
+    background: #FBF7EC;
+    padding: 22px 16px;
+    text-align:center;
+    cursor:pointer;
+    transition: border-color .15s ease, background .15s ease;
+    position:relative;
+  }
+  .dropzone.dragover{
+    border-color: var(--seal);
+    background: #F8EDE9;
+  }
+  .dropzone.has-file{
+    border-style: solid;
+    border-color: var(--gold);
+    background: #FBF4E2;
+  }
+  .dropzone input[type="file"]{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+    width:100%;
+    height:100%;
+  }
+  .dz-icon{
+    width: 34px; height: 34px;
+    margin: 0 auto 8px;
+    color: var(--gold);
+  }
+  .dz-title{
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .dz-sub{
+    font-size: 12px;
+    color: var(--ink-soft);
+    opacity: 0.85;
+  }
+  .dz-filename{
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--seal-dark);
+    margin-top: 4px;
+    word-break: break-all;
+  }
+
+  .btn{
+    width:100%;
+    border:none;
+    border-radius: 9px;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #fff;
+    background: linear-gradient(180deg, var(--seal) 0%, var(--seal-dark) 100%);
+    cursor:pointer;
+    margin-top: 6px;
+    box-shadow: 0 8px 18px -8px rgba(169,52,42,0.55);
+    transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+  }
+  .btn:hover:not(:disabled){ transform: translateY(-1px); box-shadow: 0 10px 22px -8px rgba(169,52,42,0.6); }
+  .btn:active:not(:disabled){ transform: translateY(0); }
+  .btn:disabled{ opacity: 0.65; cursor: not-allowed; }
+
+  .spinner{
+    width:16px; height:16px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display:none;
+  }
+  .btn.loading .spinner{ display:inline-block; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .error-msg{
+    font-size: 12.5px;
+    color: var(--seal);
+    margin-top: 8px;
+    text-align:center;
+    display:none;
+  }
+
+  /* ---------- Success state ---------- */
+  .success{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    padding: 10px 4px 4px;
+  }
+  .success.show{ display:flex; }
+  .form-wrap.hide{ display:none; }
+
+  .contest-window{
+    text-align:center;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: -10px 0 22px;
+  }
+
+  .locked{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    padding: 18px 4px 4px;
+  }
+  .locked.show{ display:flex; }
+  .locked-icon{
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    color: var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 16px;
+  }
+  .locked h2{
+    font-family:'Noto Serif', serif;
+    font-size: 20px;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .locked p{
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin:0;
+  }
+
+  .stamp{
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    border: 3px solid var(--seal);
+    color: var(--seal);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-family:'Noto Serif', serif;
+    font-weight:700;
+    transform: rotate(-9deg) scale(0);
+    opacity:0;
+    margin-bottom: 18px;
+    position:relative;
+  }
+  .stamp::before{
+    content:"";
+    position:absolute;
+    inset: 8px;
+    border: 1px solid var(--seal);
+    border-radius: 50%;
+  }
+  .stamp .star{ font-size: 20px; line-height:1; margin-bottom: 2px; }
+  .stamp .stamp-text{ font-size: 13px; letter-spacing: 0.06em; }
+  .stamp.animate{
+    animation: stampIn .45s cubic-bezier(.2,1.6,.4,1) forwards;
+  }
+  @keyframes stampIn{
+    0%{ transform: rotate(-9deg) scale(2.2); opacity:0; }
+    60%{ transform: rotate(-9deg) scale(0.92); opacity:1; }
+    100%{ transform: rotate(-9deg) scale(1); opacity:1; }
+  }
+
+  .success h2{
+    font-family:'Noto Serif', serif;
+    font-size: 22px;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .success p{
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin: 0 0 22px;
+    line-height:1.5;
+  }
+  .success p b{ color: var(--ink); }
+
+  .btn-secondary{
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1.5px solid var(--line);
+    box-shadow: none;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 10px 20px;
+  }
+  .btn-secondary:hover{ border-color: var(--seal); color: var(--seal); transform:none; box-shadow:none; }
+
+  .perforation.bottom{ top: auto; bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="perforation"></div>
+
+  <div class="form-wrap" id="formWrap">
+    <div class="eyebrow" id="eyebrow">Cuộc thi</div>
+    <h1 id="contestTitle">NỘP BÀI DỰ THI</h1>
+    <div class="rule"></div>
+    <div class="contest-window" id="contestWindow"></div>
+
+    <form id="entryForm">
+      <div class="field">
+        <label for="fullName">Họ và tên</label>
+        <input type="text" id="fullName" name="fullName" placeholder="Nhập họ và tên của bạn" required>
+      </div>
+
+      <div class="field">
+        <label>Chọn file dự thi</label>
+        <div class="dropzone" id="dropzone">
+          <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 15V3m0 0L7 8m5-5l5 5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="dz-title" id="dzTitle">Kéo thả file vào đây hoặc bấm để chọn</div>
+          <div class="dz-sub">Hỗ trợ: JPG, PNG, PDF, DOCX, XLSX, ZIP...</div>
+          <div class="dz-filename" id="dzFilename"></div>
+          <input type="file" id="fileInput" name="file" required
+                 accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar">
+        </div>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">
+        <span class="spinner"></span>
+        <span id="btnLabel">GỬI BÀI DỰ THI</span>
+      </button>
+
+      <div class="error-msg" id="errorMsg"></div>
+    </form>
+  </div>
+
+  <div class="locked" id="lockedView">
+    <div class="locked-icon" id="lockedIcon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <rect x="5" y="11" width="14" height="9" rx="1.5"/>
+        <path d="M8 11V7a4 4 0 018 0v4"/>
+      </svg>
+    </div>
+    <h2 id="lockedTitle">Chưa đến thời gian nộp bài</h2>
+    <p id="lockedText">Cuộc thi sẽ mở nhận bài sau.</p>
+  </div>
+
+  <div class="success" id="successView">
+    <div class="stamp" id="stamp">
+      <div class="star">★</div>
+      <div class="stamp-text">ĐÃ NỘP</div>
+    </div>
+    <h2>🎉 Chúc mừng!</h2>
+    <p>Bạn <b id="successName">đã</b> nộp bài thành công.<br>Cảm ơn bạn đã tham gia cuộc thi.</p>
+    <button class="btn btn-secondary" id="resetBtn">Nộp bài khác</button>
+  </div>
+
+  <div class="perforation bottom"></div>
+</div>
+
+<script>
+  // ============================================================
+  // CẤU HÌNH: dán URL Web App (Google Apps Script) của bạn vào đây
+  // Xem hướng dẫn triển khai trong file Code.gs đi kèm.
+  // ============================================================
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjBo6nvQ9HZ0-aboX-FME1scjHF6JdKbcscmlQX3yg7OSLWfNpLtlU6LZihgV2fchsOg/exec";
+
+  const form = document.getElementById('entryForm');
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const dzTitle = document.getElementById('dzTitle');
+  const dzFilename = document.getElementById('dzFilename');
+  const submitBtn = document.getElementById('submitBtn');
+  const btnLabel = document.getElementById('btnLabel');
+  const errorMsg = document.getElementById('errorMsg');
+  const formWrap = document.getElementById('formWrap');
+  const successView = document.getElementById('successView');
+  const stamp = document.getElementById('stamp');
+  const successName = document.getElementById('successName');
+  const resetBtn = document.getElementById('resetBtn');
+  const contestTitle = document.getElementById('contestTitle');
+  const contestWindow = document.getElementById('contestWindow');
+  const lockedView = document.getElementById('lockedView');
+  const lockedTitle = document.getElementById('lockedTitle');
+  const lockedText = document.getElementById('lockedText');
+
+  function formatVN(dateStr){
+    if(!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleString('vi-VN', { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+
+  async function loadSettings(){
+    if(SCRIPT_URL.includes('PASTE_YOUR')) return; // chưa cấu hình, giữ giao diện mặc định
+
+    try{
+      const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
+      const data = await res.json();
+      if(data.status !== 'success') return;
+
+      if(data.contestName){
+        contestTitle.textContent = data.contestName.toUpperCase();
+      }
+
+      const now = new Date();
+      const openDate = data.openDate ? new Date(data.openDate) : null;
+      const endDate = data.endDate ? new Date(data.endDate) : null;
+
+      if(openDate && endDate){
+        contestWindow.textContent = `Thời gian nhận bài: ${formatVN(data.openDate)} — ${formatVN(data.endDate)}`;
+      }
+
+      if(openDate && now < openDate){
+        lockedTitle.textContent = 'Chưa đến thời gian nộp bài';
+        lockedText.textContent = `Cuộc thi sẽ mở nhận bài lúc ${formatVN(data.openDate)}. Vui lòng quay lại sau.`;
+        formWrap.classList.add('hide');
+        lockedView.classList.add('show');
+      } else if(endDate && now > endDate){
+        lockedTitle.textContent = 'Đã kết thúc nhận bài';
+        lockedText.textContent = `Cuộc thi đã kết thúc nhận bài lúc ${formatVN(data.endDate)}. Cảm ơn bạn đã quan tâm.`;
+        formWrap.classList.add('hide');
+        lockedView.classList.add('show');
+      }
+    }catch(err){
+      console.error('Không tải được cấu hình cuộc thi:', err);
+    }
+  }
+
+  loadSettings();
+
+  function showFileName(file){
+    if(file){
+      dzTitle.textContent = 'Đã chọn file:';
+      dzFilename.textContent = `${file.name} (${(file.size/1024/1024).toFixed(2)} MB)`;
+      dropzone.classList.add('has-file');
+    }
+  }
+
+  fileInput.addEventListener('change', () => {
+    if(fileInput.files[0]) showFileName(fileInput.files[0]);
+  });
+
+  ['dragenter','dragover'].forEach(evt =>
+    dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add('dragover'); })
+  );
+  ['dragleave','drop'].forEach(evt =>
+    dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('dragover'); })
+  );
+  dropzone.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if(file){
+      fileInput.files = e.dataTransfer.files;
+      showFileName(file);
+    }
+  });
+
+  function fileToBase64(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function setLoading(isLoading){
+    submitBtn.disabled = isLoading;
+    submitBtn.classList.toggle('loading', isLoading);
+    btnLabel.textContent = isLoading ? 'ĐANG GỬI...' : 'GỬI BÀI DỰ THI';
+  }
+
+  function showError(msg){
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg.style.display = 'none';
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const file = fileInput.files[0];
+
+    if(!fullName){ showError('Vui lòng nhập họ và tên.'); return; }
+    if(!file){ showError('Vui lòng chọn file dự thi.'); return; }
+    if(file.size > 25 * 1024 * 1024){ showError('File quá lớn (tối đa 25MB).'); return; }
+
+    if(SCRIPT_URL.includes('PASTE_YOUR')){
+      showError('Chưa cấu hình SCRIPT_URL — xem hướng dẫn trong file Code.gs.');
+      return;
+    }
+
+    setLoading(true);
+    try{
+      const base64Data = await fileToBase64(file);
+      const payload = {
+        fullName,
+        fileName: file.name,
+        fileType: file.type || 'application/octet-stream',
+        fileData: base64Data
+      };
+
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // tránh preflight CORS
+        body: JSON.stringify(payload)
+      });
+
+      let ok = res.ok;
+      let serverMessage = '';
+      try{
+        const data = await res.json();
+        ok = data.status === 'success';
+        serverMessage = data.message || '';
+      }catch(_){ /* một số trình duyệt có thể không đọc được response, vẫn coi là thành công nếu res.ok */ }
+
+      if(!ok) throw new Error(serverMessage || 'Server từ chối yêu cầu.');
+
+      successName.textContent = `${fullName} đã`;
+      formWrap.classList.add('hide');
+      successView.classList.add('show');
+      stamp.classList.add('animate');
+
+    }catch(err){
+      console.error(err);
+      showError(err.message && err.message !== 'Server từ chối yêu cầu.' ? err.message : 'Có lỗi khi gửi bài. Vui lòng thử lại.');
+    }finally{
+      setLoading(false);
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    form.reset();
+    dzTitle.textContent = 'Kéo thả file vào đây hoặc bấm để chọn';
+    dzFilename.textContent = '';
+    dropzone.classList.remove('has-file');
+    successView.classList.remove('show');
+    stamp.classList.remove('animate');
+    formWrap.classList.remove('hide');
+  });
+</script>
+</body>
+</html>
